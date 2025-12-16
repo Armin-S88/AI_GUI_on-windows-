@@ -1,0 +1,34 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10' # مدیاپایپ با 3.10 تا 3.11 بسیار خوب کار می‌کند
+
+    - name: Install Dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Build with PyInstaller
+      run: |
+        # ساخت فایل اجرایی تک فایل (onefile) و بدون کنسول (noconsole)
+        pyinstaller --noconsole --onefile --name GemmaAI main.py
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: GemmaAI-Windows-App
+        path: dist/GemmaAI.exe
+
